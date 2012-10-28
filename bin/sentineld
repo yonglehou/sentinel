@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from sentinel import ThriftHandler
-from sentinel.collector import Worker
+from sentinel.thrift_handler import SentinelHandler
+from sentinel.collector.worker import SystemMonitor
 
 from sentinel.thrift import Sentinel
 from sentinel.thrift.ttypes import *
@@ -12,14 +12,25 @@ from thrift.protocol import TBinaryProtocol
 from thrift.server import TServer
 
 import socket
+from multiprocessing import Process
 
-processor = Sentinel.Processor(ThriftHandler())
-transport = TSocket.TServerSocket(port=9090)
-tfactory = TTransport.TBufferedTransportFactory()
-pfactory = TBinaryProtocol.TBinaryProtocolFactory()
+def create_thrift_server():
+    processor = Sentinel.Processor(SentinelHandler())
+    transport = TSocket.TServerSocket(port=9090)
+    tfactory = TTransport.TBufferedTransportFactory()
+    pfactory = TBinaryProtocol.TBinaryProtocolFactory()
+    server = TServer.TSimpleServer(processor, transport, tfactory, pfactory)
+    return server
 
-server = TServer.TSimpleServer(processor, transport, tfactory, pfactory)
+if __name__ == '__main__':
+    #option line will be here
 
-server.serve()
+    #system monitor worker start
+    sysmon = SystemMonitor();
+    p = Process(name='Sentinel SystemMonitor',target=sysmon)
+    p.daemon = True
+    p.start()
 
-print "End"
+    #thrift server start
+    thrift_server = create_thrift_server()
+    thrift_server.serve()

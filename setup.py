@@ -12,9 +12,11 @@ setup(
     package_dir={'': 'src'},
     packages=[
         'sentinel',
-        'sentinel.thrift',
+	'sentinel.collector',
+	'sentinel.database',
 	'sentinel.platform',
-        'sentinel.platform.linux'
+        'sentinel.platform.linux',
+        'sentinel.thrift',
         ],
     data_files=[
         ('/usr/bin', ['bin/sentinel']),
