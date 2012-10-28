@@ -1,6 +1,6 @@
 from thrift.ttypes import *
 
-class SentinelHandler():
+class SentinelHandler:
     def __init__(self):
         self.log = {}
 

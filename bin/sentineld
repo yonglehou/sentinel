@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
+from sentinel.platform import load_platform_api
 from sentinel.thrift_handler import SentinelHandler
-from sentinel.collector.worker import SystemMonitor
+from sentinel.worker import SystemMonitor
 
 from sentinel.thrift import Sentinel
 from sentinel.thrift.ttypes import *
@@ -13,6 +14,8 @@ from thrift.server import TServer
 
 import socket
 from multiprocessing import Process
+
+from tcdb import tdb
 
 def create_thrift_server():
     processor = Sentinel.Processor(SentinelHandler())
@@ -26,11 +29,14 @@ if __name__ == '__main__':
     #option line will be here
 
     #system monitor worker start
-    sysmon = SystemMonitor();
-    p = Process(name='Sentinel SystemMonitor',target=sysmon)
-    p.daemon = True
-    p.start()
+    platform_api = load_platform_api();
+    if platform_api != None:
+        sysmon = SystemMonitor(platform_api);
+        sysmonp = Process(name='Sentinel SystemMonitor',target=sysmon)
+        sysmonp.daemon = True
+        sysmonp.start()
 
-    #thrift server start
-    thrift_server = create_thrift_server()
-    thrift_server.serve()
+        thrift_server = create_thrift_server()
+        thrift_server.serve()
+    else:
+        print("This is not a supported system...")

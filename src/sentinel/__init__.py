@@ -1,2 +1,2 @@
-__all__ = ['collector', 'platform', 'thrift', 'thrift_handler']
+__all__ = ['platform', 'thrift', 'thrift_handler', 'worker']
 
