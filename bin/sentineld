@@ -15,8 +15,6 @@ from thrift.server import TServer
 import socket
 from multiprocessing import Process
 
-from tcdb import tdb
-
 def create_thrift_server():
     processor = Sentinel.Processor(SentinelHandler())
     transport = TSocket.TServerSocket(port=9090)

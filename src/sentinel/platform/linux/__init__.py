@@ -47,13 +47,11 @@ class LinuxCPU:
 def get_cpu_status(line):
     data = line.split(' ')
     cpu = LinuxCPU(int(data[2]), int(data[3]), int(data[4]), int(data[5]), int(data[6]), int(data[7]), int(data[8]))
-    print(cpu)
     return 100 * cpu.idle / (cpu.user + cpu.nice + cpu.system + cpu.idle)
 
 def get_cpun_status(line):
     data = line.split(' ')
     cpu = LinuxCPU(int(data[1]), int(data[2]), int(data[3]), int(data[4]), int(data[5]), int(data[6]), int(data[7]))
-    print(cpu)
     return 100 * cpu.idle / (cpu.user + cpu.nice + cpu.system + cpu.idle)
 
 def cpu_status(system_status):
