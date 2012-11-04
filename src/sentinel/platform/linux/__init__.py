@@ -123,6 +123,10 @@ def memory_status(system_status):
                 data = line.split(' ')
                 system_status.swap_free = data[len(data) - 2]
 
+def disk_status(system_status):
+    with open(PROC_DISKSTATS_FILE, 'r') as f:        
+        pass
+
 process_dir_regex = re.compile(r'[0-9]+')
 PROC_PROCESS_STAT_PATTERN = PROC_DIR + '/%d/stat'
 def process_status(system_status):

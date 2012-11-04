@@ -1,4 +1,6 @@
+from multiprocessing import Process
 import time
+import database.orm
 
 monitor_attrs = ['uptime', 'load_average', 'cpu_status', 'memory_status', 'process_status']
 
@@ -28,6 +30,13 @@ class RuntimeProcess:
     def __str__(self):
         return '%d %s %s %d %d %d' % (self.pid, self.name, self.state, self.utime, self.stime, self.memory)
 
+class DataCollector:
+    def __init__(self, system_status):
+        self.system_status = system_status
+
+    def __call__(self):
+        print("DataCollector : %s" % self.system_status)
+
 class SystemMonitor:
     def __init__(self, platform_api):
         self.platform_api = platform_api
@@ -44,3 +53,6 @@ class SystemMonitor:
                     api_func = getattr(self.platform_api, attr)
                     api_func(system_status)
             
+            collectorp = Process(name='Sentinel Worker : DataCollector', target=DataCollector(system_status))
+            collectorp.daemon = True
+            collectorp.start()

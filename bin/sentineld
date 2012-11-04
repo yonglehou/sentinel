@@ -29,9 +29,7 @@ if __name__ == '__main__':
     #system monitor worker start
     platform_api = load_platform_api();
     if platform_api != None:
-        sysmon = SystemMonitor(platform_api);
-        sysmonp = Process(name='Sentinel SystemMonitor',target=sysmon)
-        sysmonp.daemon = True
+        sysmonp = Process(name='Sentinel Worker : SystemMonitor',target=SystemMonitor(platform_api))
         sysmonp.start()
 
         thrift_server = create_thrift_server()
