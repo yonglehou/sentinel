@@ -1,4 +1,3 @@
-import os
 import re
 
 PROC_CPUINFO_FILE = '/proc/cpuinfo'
@@ -11,10 +10,6 @@ PROC_UPTIME_FILE = '/proc/uptime'
 PROC_MDSTAT_FILE = '/proc/mdstat'
 PROC_LOADAVG_FILE = '/proc/loadavg'
 PROC_VERSION_FILE = '/proc/version'
-
-cpu_regex = re.compile(r'^cpu[0-9]+')
-
-hz = os.sysconf(os.sysconf_names['SC_CLK_TCK'])
 
 def system_version(system_status):
     with open(PROC_VERSION_FILE, 'r') as f:
@@ -35,28 +30,22 @@ def uptime(system_status):
         system_status.uptime, system_status.idletime = data[0], data[1]
 
 class LinuxCPU:
-    def __init__(self, user, nice, system, idle, iowait, irq, softirq):
+    def __init__(self, user, nice, system, idle):
         global hz
         self.user = user
         self.nice = nice
         self.system = system
         self.idle = idle
-        self.iowait = iowait
-        self.irq = irq
-        self.softirq = softirq
 
     def __str__(self):
-        return "%ld %ld %ld %ld %ld %ld %ld" % (self.user, self.nice, self.system, self.idle, self.iowait, self.irq, self.softirq)
+        return "%ld %ld %ld %ld" % (self.user, self.nice, self.system, self.idle)
 
 def delta_cpu(before_cpu, after_cpu):
     user_delta = after_cpu.user - before_cpu.user
     nice_delta = after_cpu.nice - before_cpu.nice
     system_delta = after_cpu.system - before_cpu.system
     idle_delta = after_cpu.idle - before_cpu.idle
-    iowait_delta = after_cpu.iowait - before_cpu.iowait
-    irq_delta = after_cpu.irq - before_cpu.irq
-    softirq_delta = after_cpu.softirq - before_cpu.softirq
-    return LinuxCPU(user_delta, nice_delta, system_delta, idle_delta, iowait_delta, irq_delta, softirq_delta)
+    return LinuxCPU(user_delta, nice_delta, system_delta, idle_delta)
 
 def get_cpu_usage(delta):
     total = delta.user + delta.nice + delta.system + delta.idle
@@ -70,7 +59,7 @@ def get_cpu_t_delta(line):
     global before_cpu_t, after_cpu_t
 
     data = line.split(' ')
-    cpu_t = LinuxCPU(long(data[2]), long(data[3]), long(data[4]), long(data[5]), long(data[6]), long(data[7]), long(data[8]))
+    cpu_t = LinuxCPU(long(data[2]), long(data[3]), long(data[4]), long(data[5]))
     if before_cpu_t == None:
         before_cpu_t = cpu_t
     else:
@@ -78,7 +67,8 @@ def get_cpu_t_delta(line):
     after_cpu_t = cpu_t
 
     return delta_cpu(before_cpu_t, after_cpu_t)
-    
+
+cpu_regex = re.compile(r'^cpu[0-9]+')    
 before_cpu_n = None
 after_cpu_n = None
 def cpu_status(system_status):
@@ -91,7 +81,7 @@ def cpu_status(system_status):
         for line in f.readlines():
             if cpu_regex.match(line):
                 data = line.split(' ')
-                cpu = LinuxCPU(long(data[1]), long(data[2]), long(data[3]), long(data[4]), long(data[5]), long(data[6]), long(data[7]))
+                cpu = LinuxCPU(long(data[1]), long(data[2]), long(data[3]), long(data[4]))
                 cpu_n.append(cpu)
 
         if before_cpu_n == None:
@@ -109,3 +99,26 @@ def cpu_status(system_status):
         system_status.cpu_usages = []
         for delta in delta_cpu_n:
             system_status.cpu_usages.append(get_cpu_usage(delta))
+
+mem_total_regex = re.compile(r'MemTotal:')
+mem_free_regex = re.compile(r'MemFree:')
+swap_total_regex = re.compile(r'SwapTotal:')
+swap_free_regex = re.compile(r'SwapFree:')
+def memory_status(system_status):
+    with open(PROC_MEMINFO_FILE, 'r') as f:
+        for line in f.readlines():
+            if mem_total_regex.match(line):
+                data = line.split(' ')
+                system_status.memory_total = data[len(data) - 2]
+            elif mem_free_regex.match(line):
+                data = line.split(' ')
+                system_status.memory_free = data[len(data) - 2]
+            elif swap_total_regex.match(line):
+                data = line.split(' ')
+                system_status.swap_total = data[len(data) - 2]
+            elif swap_free_regex.match(line):
+                data = line.split(' ')
+                system_status.swap_free = data[len(data) - 2]
+
+def proc_status(system_status):
+    pass

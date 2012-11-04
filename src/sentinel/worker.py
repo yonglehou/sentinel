@@ -1,6 +1,6 @@
 import time
 
-monitor_attrs = ['uptime', 'load_average', 'cpu_status']
+monitor_attrs = ['uptime', 'load_average', 'cpu_status', 'memory_status']
 
 class SystemStatus:
     def __init__(self):
@@ -10,6 +10,10 @@ class SystemStatus:
         self.idletime = 0
         self.cpu_total = None
         self.cpu_usages = []
+        self.memory_total = 0
+        self.memory_free = 0
+        self.swap_total = 0
+        self.swap_free = 0
 
 class SystemMonitor:
     def __init__(self, platform_api):
@@ -26,5 +30,4 @@ class SystemMonitor:
                 if hasattr(self.platform_api, attr):
                     api_func = getattr(self.platform_api, attr)
                     api_func(system_status)
-            print(system_status.cpu_total)
-            print(system_status.cpu_usages)
+            
