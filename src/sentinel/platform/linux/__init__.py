@@ -1,3 +1,4 @@
+import os
 import re
 
 PROC_CPUINFO_FILE = '/proc/cpuinfo'
@@ -12,6 +13,8 @@ PROC_LOADAVG_FILE = '/proc/loadavg'
 PROC_VERSION_FILE = '/proc/version'
 
 cpu_regex = re.compile(r'^cpu[0-9]+')
+
+hz = os.sysconf(os.sysconf_names['SC_CLK_TCK'])
 
 def system_version(system_status):
     with open(PROC_VERSION_FILE, 'r') as f:
@@ -33,6 +36,7 @@ def uptime(system_status):
 
 class LinuxCPU:
     def __init__(self, user, nice, system, idle, iowait, irq, softirq):
+        global hz
         self.user = user
         self.nice = nice
         self.system = system
@@ -42,23 +46,66 @@ class LinuxCPU:
         self.softirq = softirq
 
     def __str__(self):
-        return "%d %d %d %d %d %d %d" % (self.user, self.nice, self.system, self.idle, self.iowait, self.irq, self.softirq)
+        return "%ld %ld %ld %ld %ld %ld %ld" % (self.user, self.nice, self.system, self.idle, self.iowait, self.irq, self.softirq)
 
-def get_cpu_status(line):
+def delta_cpu(before_cpu, after_cpu):
+    user_delta = after_cpu.user - before_cpu.user
+    nice_delta = after_cpu.nice - before_cpu.nice
+    system_delta = after_cpu.system - before_cpu.system
+    idle_delta = after_cpu.idle - before_cpu.idle
+    iowait_delta = after_cpu.iowait - before_cpu.iowait
+    irq_delta = after_cpu.irq - before_cpu.irq
+    softirq_delta = after_cpu.softirq - before_cpu.softirq
+    return LinuxCPU(user_delta, nice_delta, system_delta, idle_delta, iowait_delta, irq_delta, softirq_delta)
+
+def get_cpu_usage(delta):
+    total = delta.user + delta.nice + delta.system + delta.idle
+    if total == 0:
+        return 0
+    return 100.0 * (total - delta.idle) / total
+
+before_cpu_t = None
+after_cpu_t = None
+def get_cpu_t_delta(line):
+    global before_cpu_t, after_cpu_t
+
     data = line.split(' ')
-    cpu = LinuxCPU(int(data[2]), int(data[3]), int(data[4]), int(data[5]), int(data[6]), int(data[7]), int(data[8]))
-    return 100 * cpu.idle / (cpu.user + cpu.nice + cpu.system + cpu.idle)
+    cpu_t = LinuxCPU(long(data[2]), long(data[3]), long(data[4]), long(data[5]), long(data[6]), long(data[7]), long(data[8]))
+    if before_cpu_t == None:
+        before_cpu_t = cpu_t
+    else:
+        before_cpu_t = after_cpu_t
+    after_cpu_t = cpu_t
 
-def get_cpun_status(line):
-    data = line.split(' ')
-    cpu = LinuxCPU(int(data[1]), int(data[2]), int(data[3]), int(data[4]), int(data[5]), int(data[6]), int(data[7]))
-    return 100 * cpu.idle / (cpu.user + cpu.nice + cpu.system + cpu.idle)
-
+    return delta_cpu(before_cpu_t, after_cpu_t)
+    
+before_cpu_n = None
+after_cpu_n = None
 def cpu_status(system_status):
+    global before_cpu_n, after_cpu_n
+
     with open(PROC_STAT_FILE, 'r') as f:
         line = f.readline()
-        system_status.cpu_total = get_cpu_status(line)
-        system_status.cpu_usages = []
+        delta_cpu_t = get_cpu_t_delta(line)
+        cpu_n = []
         for line in f.readlines():
             if cpu_regex.match(line):
-                system_status.cpu_usages.append(get_cpun_status(line))
+                data = line.split(' ')
+                cpu = LinuxCPU(long(data[1]), long(data[2]), long(data[3]), long(data[4]), long(data[5]), long(data[6]), long(data[7]))
+                cpu_n.append(cpu)
+
+        if before_cpu_n == None:
+            before_cpu_n = cpu_n
+        else:
+            before_cpu_n = after_cpu_n
+
+        after_cpu_n = cpu_n
+        
+        delta_cpu_n = []
+        for i in range(len(after_cpu_n)):
+            delta_cpu_n.append(delta_cpu(before_cpu_n[i], after_cpu_n[i]))
+
+        system_status.cpu_total = get_cpu_usage(delta_cpu_t)
+        system_status.cpu_usages = []
+        for delta in delta_cpu_n:
+            system_status.cpu_usages.append(get_cpu_usage(delta))

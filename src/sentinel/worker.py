@@ -27,5 +27,4 @@ class SystemMonitor:
                     api_func = getattr(self.platform_api, attr)
                     api_func(system_status)
             print(system_status.cpu_total)
-            for cpu in system_status.cpu_usages:
-                print(cpu)
+            print(system_status.cpu_usages)
