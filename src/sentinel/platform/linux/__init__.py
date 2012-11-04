@@ -1,15 +1,18 @@
+from sentinel.worker import RuntimeProcess
+import os
 import re
 
-PROC_CPUINFO_FILE = '/proc/cpuinfo'
-PROC_MEMINFO_FILE = '/proc/meminfo'
-PROC_STAT_FILE = '/proc/stat'
-PROC_SWAPS_FILE = '/proc/swaps'
-PROC_DISKSTATS_FILE = '/proc/diskstats'
-PROC_PARTITIONS_FILE = '/proc/partitions'
-PROC_UPTIME_FILE = '/proc/uptime'
-PROC_MDSTAT_FILE = '/proc/mdstat'
-PROC_LOADAVG_FILE = '/proc/loadavg'
-PROC_VERSION_FILE = '/proc/version'
+PROC_DIR = '/proc'
+PROC_CPUINFO_FILE = PROC_DIR + '/cpuinfo'
+PROC_MEMINFO_FILE = PROC_DIR + '/meminfo'
+PROC_STAT_FILE = PROC_DIR + '/stat'
+PROC_SWAPS_FILE = PROC_DIR + '/swaps'
+PROC_DISKSTATS_FILE = PROC_DIR + '/diskstats'
+PROC_PARTITIONS_FILE = PROC_DIR + '/partitions'
+PROC_UPTIME_FILE = PROC_DIR + '/uptime'
+PROC_MDSTAT_FILE = PROC_DIR + '/mdstat'
+PROC_LOADAVG_FILE = PROC_DIR + '/loadavg'
+PROC_VERSION_FILE = PROC_DIR + '/version'
 
 def system_version(system_status):
     with open(PROC_VERSION_FILE, 'r') as f:
@@ -120,5 +123,31 @@ def memory_status(system_status):
                 data = line.split(' ')
                 system_status.swap_free = data[len(data) - 2]
 
-def proc_status(system_status):
-    pass
+process_dir_regex = re.compile(r'[0-9]+')
+PROC_PROCESS_STAT_PATTERN = PROC_DIR + '/%d/stat'
+def process_status(system_status):
+    def create_process_info(proc_stat_filename):
+        process = RuntimeProcess()
+        with open(proc_stat_filename, 'r') as f:
+            data = f.read().split(' ')
+            process.pid = long(data[0])
+            process.name = data[1][1:-1]
+            process.state = data[2]
+            process.utime = long(data[13])
+            process.stime = long(data[14])
+            process.memory = long(data[22])
+        return process
+
+    processes = []
+    proc_subdirs = os.listdir('/proc')
+    for dentry in proc_subdirs:
+        if process_dir_regex.match(dentry):
+            proc_stat_filename = PROC_PROCESS_STAT_PATTERN % long(dentry)
+            try:
+                proc_stat = create_process_info(proc_stat_filename)
+                processes.append(proc_stat)
+            except:
+                pass
+
+    system_status.processes = processes
+
