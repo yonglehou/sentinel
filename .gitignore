@@ -1,3 +1,4 @@
+*.tch
 *.pyc
 build
 TAGS
