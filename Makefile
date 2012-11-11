@@ -1,5 +1,7 @@
 .PHONY: all sentineld sentinel compile-thrift clean
 
+THRIFT := /usr/local/bin/thrift
+
 all: clean compile-thrift
 
 setup:
@@ -7,7 +9,7 @@ setup:
 
 compile-thrift: sentinel.thrift
 	@mkdir -p src/thrift
-	@thrift --gen py -out src/thrift $^
+	@$(THRIFT) --gen py -out src/thrift $^
 	@mv src/thrift/sentinel src/sentinel/thrift
 	@rm -rf src/thrift
 

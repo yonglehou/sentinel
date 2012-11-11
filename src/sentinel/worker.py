@@ -1,11 +1,12 @@
 from multiprocessing import Process
 import time
-import database.orm
+import database.tc
 
 monitor_attrs = ['uptime', 'load_average', 'cpu_status', 'memory_status', 'process_status']
 
 class SystemStatus:
     def __init__(self):
+        self.datetime = int(round(time.time() * 1000))
         self.os_type = ''
         self.os_version = ''
         self.uptime = 0
@@ -17,6 +18,22 @@ class SystemStatus:
         self.swap_total = 0
         self.swap_free = 0
         self.processes = []
+
+    def to_hash(self):
+        return {
+            'datetime': self.datetime,
+            'os_type' : self.os_type,
+            'os_version' : self.os_version,
+            'uptime': self.uptime,
+            'idletime': self.idletime,
+            'cpu_total': self.cpu_total,
+            'cpu_usages': self.cpu_usages,
+            'memory_total': self.memory_total,
+            'memory_free': self.memory_free,
+            'swap_total': self.swap_total,
+            'swap_free': self.swap_free,
+            'self.processes': self.processes
+            }
 
 class RuntimeProcess:
     def __init__(self):
@@ -35,7 +52,7 @@ class DataCollector:
         self.system_status = system_status
 
     def __call__(self):
-        print("DataCollector : %s" % self.system_status)
+        database.tc.save_system_status(self.system_status)
 
 class SystemMonitor:
     def __init__(self, platform_api):
