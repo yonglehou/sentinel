@@ -10,6 +10,7 @@ setup:
 compile-thrift: sentinel.thrift
 	@mkdir -p src/thrift
 	@$(THRIFT) --gen py -out src/thrift $^
+	@rm -rf src/sentinel/thrift
 	@mv src/thrift/sentinel src/sentinel/thrift
 	@rm -rf src/thrift
 

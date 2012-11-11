@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+import time
+
+from datetime import datetime, timedelta
+
 from sentinel.thrift import Sentinel
 from sentinel.thrift.ttypes import *
 
@@ -16,7 +20,9 @@ try:
     client = Sentinel.Client(protocol)
     transport.open()
     
-    print(client.report_machine_status())
+    from_date = time.mktime(datetime.today().timetuple())
+    to_date = time.mktime((datetime.today() + timedelta(days=1)).timetuple())
+    print(client.report_machine_status(from_date, to_date))
 
     transport.close()
 except Thrift.TException, tx:
