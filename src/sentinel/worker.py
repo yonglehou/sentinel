@@ -1,6 +1,6 @@
 from multiprocessing import Process
 import time
-import database.tc
+import datastore
 
 monitor_attrs = ['uptime', 'load_average', 'cpu_status', 'memory_status', 'process_status']
 
@@ -19,7 +19,8 @@ class SystemStatus:
         self.swap_free = 0
         self.processes = []
 
-    def to_hash(self):
+    def to_dict(self):
+        dict_processes = [p.to_dict() for p in self.processes]
         return {
             'datetime': self.datetime,
             'os_type' : self.os_type,
@@ -32,7 +33,7 @@ class SystemStatus:
             'memory_free': self.memory_free,
             'swap_total': self.swap_total,
             'swap_free': self.swap_free,
-            'self.processes': self.processes
+            'self.processes': dict_processes
             }
 
 class RuntimeProcess:
@@ -46,13 +47,24 @@ class RuntimeProcess:
     
     def __str__(self):
         return '%d %s %s %d %d %d' % (self.pid, self.name, self.state, self.utime, self.stime, self.memory)
+    
+    def to_dict(self):
+        return {
+            'pid': self.pid,
+            'name': self.name,
+            'state': self.state,
+            'utime': self.utime,
+            'stime': self.stime,
+            'memory': self.memory
+            }
 
 class DataCollector:
     def __init__(self, system_status):
         self.system_status = system_status
 
     def __call__(self):
-        database.tc.save_system_status(self.system_status)
+        datastore.initialize()
+        datastore.save_system_status(self.system_status)
 
 class SystemMonitor:
     def __init__(self, platform_api):

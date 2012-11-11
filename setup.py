@@ -12,7 +12,6 @@ setup(
     package_dir={'': 'src'},
     packages=[
         'sentinel',
-	'sentinel.database',
 	'sentinel.platform',
         'sentinel.platform.linux',
         'sentinel.thrift',
