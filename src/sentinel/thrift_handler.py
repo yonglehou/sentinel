@@ -54,7 +54,7 @@ class SentinelHandler:
                 status = status + translate_to_thrift_object(loaded)
             except Exception, e:
                 print('Error: %s' % e)
-
+        print(len(status))
         return status
     
     def do_system_command(self, command):

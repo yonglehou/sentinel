@@ -13,6 +13,7 @@ class DataCollector:
     def __call__(self):
         datastore.initialize()
         datastore.save_system_status(self.system_status)
+        print("Data Collector Called : %d" % self.system_status.timestamp)
 
 class SystemMonitor:
     def __init__(self, platform_api):
@@ -25,6 +26,7 @@ class SystemMonitor:
             api_func(system_status)
         while(True):
             time.sleep(1)
+            system_status.timestamp = int(time.time())
             for attr in monitor_attrs:
                 if hasattr(self.platform_api, attr):
                     api_func = getattr(self.platform_api, attr)
