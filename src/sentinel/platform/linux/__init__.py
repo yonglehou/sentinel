@@ -30,7 +30,7 @@ def uptime(system_status):
     with open(PROC_UPTIME_FILE, 'r') as f:
         line = f.readline()
         data = line.split(' ')
-        system_status.uptime, system_status.idletime = data[0], data[1]
+        system_status.uptime, system_status.idletime = long(float(data[0])), long(float(data[1]))
 
 class LinuxCPU:
     def __init__(self, user, nice, system, idle):
@@ -112,16 +112,16 @@ def memory_status(system_status):
         for line in f.readlines():
             if mem_total_regex.match(line):
                 data = line.split(' ')
-                system_status.memory_total = data[len(data) - 2]
+                system_status.memory_total = long(data[len(data) - 2])
             elif mem_free_regex.match(line):
                 data = line.split(' ')
-                system_status.memory_free = data[len(data) - 2]
+                system_status.memory_free = long(data[len(data) - 2])
             elif swap_total_regex.match(line):
                 data = line.split(' ')
-                system_status.swap_total = data[len(data) - 2]
+                system_status.swap_total = long(data[len(data) - 2])
             elif swap_free_regex.match(line):
                 data = line.split(' ')
-                system_status.swap_free = data[len(data) - 2]
+                system_status.swap_free = long(data[len(data) - 2])
 
 def disk_status(system_status):
     with open(PROC_DISKSTATS_FILE, 'r') as f:        

@@ -33,6 +33,10 @@ struct CommandResponse {
 }
 
 service Sentinel {
+	MachineStatus get_current_status(),
+	list<i64> get_current_cpu_usages(),
+	list<i64> get_current_memory_usages(),
+	list<ProcessInfo> get_current_process_usages(),
 	list<MachineStatus> report_machine_status(1: i64 from_date, 2: i64 to_date),
 	CommandResponse do_system_command(1: string command),
 }

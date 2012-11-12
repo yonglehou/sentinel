@@ -4,7 +4,7 @@ from datastore import SystemStatus, RuntimeProcess
 import time
 import datastore
 
-monitor_attrs = ['uptime', 'load_average', 'cpu_status', 'memory_status', 'process_status']
+monitor_attrs = ['system_version','uptime', 'load_average', 'cpu_status', 'memory_status', 'process_status']
 
 class DataCollector:
     def __init__(self, system_status):
@@ -19,19 +19,19 @@ class SystemMonitor:
     def __init__(self, platform_api):
         self.platform_api = platform_api
 
-    def __call__(self):
+    def action(self):
         system_status = SystemStatus()
-        if hasattr(self.platform_api, 'system_version'):
-            api_func = getattr(self.platform_api, 'system_version')
-            api_func(system_status)
+        for attr in monitor_attrs:
+            if hasattr(self.platform_api, attr):
+                api_func = getattr(self.platform_api, attr)
+                api_func(system_status)
+
+        return system_status
+
+    def __call__(self):
         while(True):
             time.sleep(1)
-            system_status.timestamp = int(time.time())
-            for attr in monitor_attrs:
-                if hasattr(self.platform_api, attr):
-                    api_func = getattr(self.platform_api, attr)
-                    api_func(system_status)
-            
+            system_status = self.action()
             collectorp = Process(name='Sentinel Worker : DataCollector', target=DataCollector(system_status))
             collectorp.daemon = True
             collectorp.start()

@@ -20,10 +20,11 @@ try:
     client = Sentinel.Client(protocol)
     transport.open()
     
-    from_date = time.mktime(datetime.today().timetuple())
-    to_date = time.mktime((datetime.today() + timedelta(days=1)).timetuple())
-    print(client.report_machine_status(from_date, to_date))
-
+    #from_date = time.mktime(datetime.today().timetuple())
+    #to_date = time.mktime((datetime.today() + timedelta(days=1)).timetuple())
+    #print(client.report_machine_status(from_date, to_date))
+    
+    print(client.get_current_status())
     transport.close()
 except Thrift.TException, tx:
     print('%s' % tx.message)

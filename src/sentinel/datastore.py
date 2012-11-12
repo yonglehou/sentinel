@@ -93,28 +93,28 @@ def load_system_status(target_date):
     result = []
     for entry in bdb.values():
         s = SystemStatus()
-        s.timestamp = long(entry['timestamp'])
+        s.timestamp = entry['timestamp']
         s.os_type = entry['os_type']
         s.os_version = entry['os_version']
-        s.uptime = long(float(entry['uptime']))
-        s.idletime = long(float(entry['idletime']))
-        s.cpu_total = long(entry['cpu_total'])
-        s.memory_total = long(entry['memory_total'])
-        s.memory_free = long(entry['memory_free'])
-        s.swap_total = long(entry['swap_total'])
-        s.swap_free = long(entry['swap_free'])
+        s.uptime = entry['uptime']
+        s.idletime = entry['idletime']
+        s.cpu_total = entry['cpu_total']
+        s.memory_total = entry['memory_total']
+        s.memory_free = entry['memory_free']
+        s.swap_total = entry['swap_total']
+        s.swap_free = entry['swap_free']
 
         for cu in entry['cpu_usages']:
             s.cpu_usages.append(cu)
 
         for pe in entry['processes']:
             p = RuntimeProcess()
-            p.pid = long(pe['pid'])
+            p.pid = pe['pid']
             p.name = pe['name']
             p.state = pe['state']
-            p.utime = long(float(pe['utime']))
-            p.stime = long(float(pe['stime']))
-            p.memory = long(pe['memory'])
+            p.utime = pe['utime']
+            p.stime = pe['stime']
+            p.memory = pe['memory']
             s.processes.append(p)
 
         result.append(s)

@@ -15,8 +15,10 @@ from thrift.server import TServer
 import socket
 from multiprocessing import Process
 
+platform_api = load_platform_api();
+
 def create_thrift_server():
-    processor = Sentinel.Processor(SentinelHandler())
+    processor = Sentinel.Processor(SentinelHandler(platform_api))
     transport = TSocket.TServerSocket(port=9090)
     tfactory = TTransport.TBufferedTransportFactory()
     pfactory = TBinaryProtocol.TBinaryProtocolFactory()
@@ -27,7 +29,6 @@ if __name__ == '__main__':
     #option line will be here
 
     #system monitor worker start
-    platform_api = load_platform_api();
     if platform_api != None:
         sysmonp = Process(name='Sentinel Worker : SystemMonitor',target=SystemMonitor(platform_api))
         sysmonp.start()
