@@ -129,6 +129,7 @@ def disk_status(system_status):
 
 process_dir_regex = re.compile(r'[0-9]+')
 PROC_PROCESS_STAT_PATTERN = PROC_DIR + '/%d/stat'
+PROC_PROCESS_CMDLINE_PATTERN = PROC_DIR + '/%d/cmdline'
 def process_status(system_status):
     def create_process_info(proc_stat_filename):
         process = RuntimeProcess()
@@ -146,12 +147,14 @@ def process_status(system_status):
     proc_subdirs = os.listdir('/proc')
     for dentry in proc_subdirs:
         if process_dir_regex.match(dentry):
-            proc_stat_filename = PROC_PROCESS_STAT_PATTERN % long(dentry)
-            try:
-                proc_stat = create_process_info(proc_stat_filename)
-                processes.append(proc_stat)
-            except:
-                pass
+            proc_cmdline_filename = PROC_PROCESS_CMDLINE_PATTERN % long(dentry)
+            if '' != open(proc_cmdline_filename).read():
+                proc_stat_filename = PROC_PROCESS_STAT_PATTERN % long(dentry)
+                try:
+                    proc_stat = create_process_info(proc_stat_filename)
+                    processes.append(proc_stat)
+                except:
+                    pass
 
     system_status.processes = processes
 
