@@ -18,7 +18,7 @@ def system_version(system_status):
     with open(PROC_VERSION_FILE, 'r') as f:
         line = f.readline()
         data = line.split(' ')
-        system_status.os_type, system_status.os_version = data[0], data[1]
+        system_status.os_type, system_status.os_version = data[0], data[2]
 
 def load_average(system_status):
     with open(PROC_LOADAVG_FILE, 'r') as f:
@@ -147,14 +147,14 @@ def process_status(system_status):
     proc_subdirs = os.listdir('/proc')
     for dentry in proc_subdirs:
         if process_dir_regex.match(dentry):
-            proc_cmdline_filename = PROC_PROCESS_CMDLINE_PATTERN % long(dentry)
-            if '' != open(proc_cmdline_filename).read():
-                proc_stat_filename = PROC_PROCESS_STAT_PATTERN % long(dentry)
-                try:
+            try:
+                proc_cmdline_filename = PROC_PROCESS_CMDLINE_PATTERN % long(dentry)
+                if '' != open(proc_cmdline_filename).read():
+                    proc_stat_filename = PROC_PROCESS_STAT_PATTERN % long(dentry)
                     proc_stat = create_process_info(proc_stat_filename)
                     processes.append(proc_stat)
-                except:
-                    pass
+            except:
+                pass
 
     system_status.processes = processes
 
