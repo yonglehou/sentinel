@@ -15,12 +15,19 @@ def runtime_process_translate_to_thrift_object(p):
     pi.memory = p.memory
     return pi
 
-def network_process_translate_to_thrift_object(n):
+def network_device_translate_to_thrift_object(n):
     ni = NetworkDeviceInfo()
     ni.device = n.device
     ni.send = n.send
     ni.receive = n.receive
     return ni
+
+def block_device_translate_to_thrift_object(n):
+    bi = BlockDeviceInfo()
+    bi.device = b.device
+    bi.read = b.read
+    bi.write = b.write
+    return bi
 
 def system_status_translate_to_thrift_object(s):
     ms = MachineStatus()
@@ -41,8 +48,11 @@ def system_status_translate_to_thrift_object(s):
         pi = runtime_process_translate_to_thrift_object(p)
         ms.processes.append(pi)
     for n in s.netdevs:
-        ni = network_process_translate_to_thrift_object(n)
+        ni = network_device_translate_to_thrift_object(n)
         ms.netdevs.append(ni)
+    for b in b.blockdevs:
+        bi = block_device_translate_to_thrift_object(b)
+        ms.blockdevs.append(bi)
 
     return ms
 

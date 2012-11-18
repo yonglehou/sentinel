@@ -17,6 +17,90 @@ except:
 
 
 
+class BlockDeviceInfo:
+  """
+  Attributes:
+   - device
+   - read
+   - write
+  """
+
+  thrift_spec = (
+    None, # 0
+    (1, TType.STRING, 'device', None, None, ), # 1
+    (2, TType.I64, 'read', None, None, ), # 2
+    (3, TType.I64, 'write', None, None, ), # 3
+  )
+
+  def __init__(self, device=None, read=None, write=None,):
+    self.device = device
+    self.read = read
+    self.write = write
+
+  def read(self, iprot):
+    if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
+      fastbinary.decode_binary(self, iprot.trans, (self.__class__, self.thrift_spec))
+      return
+    iprot.readStructBegin()
+    while True:
+      (fname, ftype, fid) = iprot.readFieldBegin()
+      if ftype == TType.STOP:
+        break
+      if fid == 1:
+        if ftype == TType.STRING:
+          self.device = iprot.readString();
+        else:
+          iprot.skip(ftype)
+      elif fid == 2:
+        if ftype == TType.I64:
+          self.read = iprot.readI64();
+        else:
+          iprot.skip(ftype)
+      elif fid == 3:
+        if ftype == TType.I64:
+          self.write = iprot.readI64();
+        else:
+          iprot.skip(ftype)
+      else:
+        iprot.skip(ftype)
+      iprot.readFieldEnd()
+    iprot.readStructEnd()
+
+  def write(self, oprot):
+    if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and self.thrift_spec is not None and fastbinary is not None:
+      oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
+      return
+    oprot.writeStructBegin('BlockDeviceInfo')
+    if self.device is not None:
+      oprot.writeFieldBegin('device', TType.STRING, 1)
+      oprot.writeString(self.device)
+      oprot.writeFieldEnd()
+    if self.read is not None:
+      oprot.writeFieldBegin('read', TType.I64, 2)
+      oprot.writeI64(self.read)
+      oprot.writeFieldEnd()
+    if self.write is not None:
+      oprot.writeFieldBegin('write', TType.I64, 3)
+      oprot.writeI64(self.write)
+      oprot.writeFieldEnd()
+    oprot.writeFieldStop()
+    oprot.writeStructEnd()
+
+  def validate(self):
+    return
+
+
+  def __repr__(self):
+    L = ['%s=%r' % (key, value)
+      for key, value in self.__dict__.iteritems()]
+    return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+  def __eq__(self, other):
+    return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+  def __ne__(self, other):
+    return not (self == other)
+
 class NetworkDeviceInfo:
   """
   Attributes:
@@ -237,6 +321,7 @@ class MachineStatus:
    - swap_free
    - processes
    - netdevs
+   - blockdevs
   """
 
   thrift_spec = (
@@ -255,9 +340,10 @@ class MachineStatus:
     (12, TType.LIST, 'processes', (TType.STRUCT,(ProcessInfo, ProcessInfo.thrift_spec)), None, ), # 12
     None, # 13
     (14, TType.LIST, 'netdevs', (TType.STRUCT,(NetworkDeviceInfo, NetworkDeviceInfo.thrift_spec)), None, ), # 14
+    (15, TType.LIST, 'blockdevs', (TType.STRUCT,(BlockDeviceInfo, BlockDeviceInfo.thrift_spec)), None, ), # 15
   )
 
-  def __init__(self, timestamp=None, os_type=None, os_version=None, uptime=None, idletime=None, cpu_total=None, cpu_usages=None, memory_total=None, memory_free=None, swap_total=None, swap_free=None, processes=None, netdevs=None,):
+  def __init__(self, timestamp=None, os_type=None, os_version=None, uptime=None, idletime=None, cpu_total=None, cpu_usages=None, memory_total=None, memory_free=None, swap_total=None, swap_free=None, processes=None, netdevs=None, blockdevs=None,):
     self.timestamp = timestamp
     self.os_type = os_type
     self.os_version = os_version
@@ -271,6 +357,7 @@ class MachineStatus:
     self.swap_free = swap_free
     self.processes = processes
     self.netdevs = netdevs
+    self.blockdevs = blockdevs
 
   def read(self, iprot):
     if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
@@ -363,6 +450,17 @@ class MachineStatus:
           iprot.readListEnd()
         else:
           iprot.skip(ftype)
+      elif fid == 15:
+        if ftype == TType.LIST:
+          self.blockdevs = []
+          (_etype21, _size18) = iprot.readListBegin()
+          for _i22 in xrange(_size18):
+            _elem23 = BlockDeviceInfo()
+            _elem23.read(iprot)
+            self.blockdevs.append(_elem23)
+          iprot.readListEnd()
+        else:
+          iprot.skip(ftype)
       else:
         iprot.skip(ftype)
       iprot.readFieldEnd()
@@ -400,8 +498,8 @@ class MachineStatus:
     if self.cpu_usages is not None:
       oprot.writeFieldBegin('cpu_usages', TType.LIST, 7)
       oprot.writeListBegin(TType.I16, len(self.cpu_usages))
-      for iter18 in self.cpu_usages:
-        oprot.writeI16(iter18)
+      for iter24 in self.cpu_usages:
+        oprot.writeI16(iter24)
       oprot.writeListEnd()
       oprot.writeFieldEnd()
     if self.memory_total is not None:
@@ -423,15 +521,22 @@ class MachineStatus:
     if self.processes is not None:
       oprot.writeFieldBegin('processes', TType.LIST, 12)
       oprot.writeListBegin(TType.STRUCT, len(self.processes))
-      for iter19 in self.processes:
-        iter19.write(oprot)
+      for iter25 in self.processes:
+        iter25.write(oprot)
       oprot.writeListEnd()
       oprot.writeFieldEnd()
     if self.netdevs is not None:
       oprot.writeFieldBegin('netdevs', TType.LIST, 14)
       oprot.writeListBegin(TType.STRUCT, len(self.netdevs))
-      for iter20 in self.netdevs:
-        iter20.write(oprot)
+      for iter26 in self.netdevs:
+        iter26.write(oprot)
+      oprot.writeListEnd()
+      oprot.writeFieldEnd()
+    if self.blockdevs is not None:
+      oprot.writeFieldBegin('blockdevs', TType.LIST, 15)
+      oprot.writeListBegin(TType.STRUCT, len(self.blockdevs))
+      for iter27 in self.blockdevs:
+        iter27.write(oprot)
       oprot.writeListEnd()
       oprot.writeFieldEnd()
     oprot.writeFieldStop()

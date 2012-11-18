@@ -4,6 +4,12 @@ namespace php sentinel
 namespace py sentinel
 namespace rb sentinel
 
+struct BlockDeviceInfo {
+       1: string device
+       2: i64 read
+       3: i64 write
+}
+
 struct NetworkDeviceInfo {
        1: string device
        2: i64 send
@@ -33,6 +39,7 @@ struct MachineStatus {
        11: i64 swap_free
        12: list<ProcessInfo> processes
        14: list<NetworkDeviceInfo> netdevs
+       15: list<BlockDeviceInfo> blockdevs
 }
 
 struct CommandResponse {
