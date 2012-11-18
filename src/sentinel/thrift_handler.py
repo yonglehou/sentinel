@@ -50,7 +50,7 @@ def system_status_translate_to_thrift_object(s):
     for n in s.netdevs:
         ni = network_device_translate_to_thrift_object(n)
         ms.netdevs.append(ni)
-    for b in b.blockdevs:
+    for b in s.blockdevs:
         bi = block_device_translate_to_thrift_object(b)
         ms.blockdevs.append(bi)
 
