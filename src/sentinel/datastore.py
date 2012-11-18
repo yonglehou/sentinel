@@ -21,9 +21,13 @@ class SystemStatus:
         self.swap_total = 0
         self.swap_free = 0
         self.processes = []
+        self.blockdevs = []
+        self.netdevs = []
 
     def to_dict(self):
         dict_processes = [p.to_dict() for p in self.processes]
+        blockdevs = [b.to_dict() for b in self.blockdevs]
+        netdevs = [n.to_dict() for n in self.netdevs]
         return {
             'timestamp': self.timestamp,
             'os_type' : self.os_type,
@@ -36,7 +40,9 @@ class SystemStatus:
             'memory_free': self.memory_free,
             'swap_total': self.swap_total,
             'swap_free': self.swap_free,
-            'processes': dict_processes
+            'processes': dict_processes,
+            'blockdevs': blockdevs,
+            'netdevs': netdevs,
             }
 
 class RuntimeProcess:
@@ -60,6 +66,33 @@ class RuntimeProcess:
             'stime': self.stime,
             'memory': self.memory
             }
+
+class BlockDevice:
+    def __init__(self):
+        self.device = ''
+        self.read = ''
+        self.write = ''
+    
+    def to_dict(self):
+        return {
+            'device': self.device,
+            'read': self.read,
+            'write': self.write,
+            }
+
+class NetworkDevice:
+    def __init__(self):
+        self.device = ''
+        self.send = ''
+        self.receive = ''
+    
+    def to_dict(self):
+        return {
+            'device': self.device,
+            'send': self.send,
+            'receive': self.receive,
+            }
+
 
 class BSONBDB(BDB):
     def __setitem__(self, key, value):
@@ -116,7 +149,14 @@ def load_system_status(target_date):
             p.stime = pe['stime']
             p.memory = pe['memory']
             s.processes.append(p)
-
+        
+        for ne in entry['netdevs']:
+            n = NetworkDevice()
+            n.device = ne['device']
+            n.send = ne['send']
+            n.receive = ne['receive']
+            s.netdevs.append(n)
+            
         result.append(s)
 
     bdb.close()

@@ -1,4 +1,4 @@
-from sentinel.worker import RuntimeProcess
+from sentinel.datastore import RuntimeProcess, BlockDevice, NetworkDevice
 import os
 import re
 
@@ -13,6 +13,7 @@ PROC_UPTIME_FILE = PROC_DIR + '/uptime'
 PROC_MDSTAT_FILE = PROC_DIR + '/mdstat'
 PROC_LOADAVG_FILE = PROC_DIR + '/loadavg'
 PROC_VERSION_FILE = PROC_DIR + '/version'
+PROC_NETSTAT_FILE = PROC_DIR + '/net/dev'
 
 def system_version(system_status):
     with open(PROC_VERSION_FILE, 'r') as f:
@@ -157,4 +158,70 @@ def process_status(system_status):
                 pass
 
     system_status.processes = processes
+
+prev_blockdev_map = {}
+blockio_dev_regex = re.compile(r'')
+def disk_status(system_status):
+    with open(PROC_DISKSTATS_FILE, 'r') as f:
+        system_status.blockdevs = []
+        for line in f.readlines():
+            if blockio_dev_regex.match(line):
+                values = []
+                for i in line.split(' '):
+                    if i != '':
+                        values.append(i)
+                major_no = values[0]
+                minor_no = values[1]
+                if int(major_no) == 8:
+                    device = values[2]
+                    read_complete = long(values[3])
+                    write_complete = long(values[8])
+
+                    blockd = BlockDevice()
+                    blockd.read = read_complete
+                    blockd.write = write_complete
+                    if device in prev_blockdev_map:
+                        pbd = prev_blockdev_map[device]
+                        
+                        nbd = BlockDevice()
+                        nbd.device = device
+                        nbd.read = blockd.read - pbd.read
+                        nbd.write = blockd.read - pbd.write
+                        
+                        system_status.blockdevs.append(nbd)
+
+                    prev_blockdev_map[device] = blockd
+
+
+prev_netdev_map = {}
+netstat_dev_regex = re.compile(r'.+:')
+def network_status(system_status):
+    with open(PROC_NETSTAT_FILE, 'r') as f:
+        system_status.netdevs = []
+        for line in f.readlines():
+            if netstat_dev_regex.match(line):
+                device, value_str = line.split(':')
+                values = []
+                for i in value_str.split(' '):
+                    if i != '':
+                        values.append(i)
+                net_in = long(values[0])
+                net_out = long(values[8])
+                
+                netdev = NetworkDevice()
+                netdev.device = device
+                netdev.receive = net_in
+                netdev.send = net_out
+
+                if device in prev_netdev_map:
+                    pnd = prev_netdev_map[device]
+
+                    nnd = NetworkDevice()
+                    nnd.device = device
+                    nnd.receive = netdev.receive - pnd.receive
+                    nnd.send = netdev.send - pnd.send
+
+                    system_status.netdevs.append(nnd)
+                
+                prev_netdev_map[device] = netdev
 

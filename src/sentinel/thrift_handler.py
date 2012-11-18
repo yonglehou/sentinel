@@ -6,7 +6,7 @@ from datastore import SystemStatus
 import datastore
 
 def runtime_process_translate_to_thrift_object(p):
-    pi = ProcessInfo(p)
+    pi = ProcessInfo()
     pi.pid = p.pid
     pi.name = p.name
     pi.state = p.state
@@ -14,6 +14,13 @@ def runtime_process_translate_to_thrift_object(p):
     pi.stime = p.stime
     pi.memory = p.memory
     return pi
+
+def network_process_translate_to_thrift_object(n):
+    ni = NetworkDeviceInfo()
+    ni.device = n.device
+    ni.send = n.send
+    ni.receive = n.receive
+    return ni
 
 def system_status_translate_to_thrift_object(s):
     ms = MachineStatus()
@@ -29,9 +36,13 @@ def system_status_translate_to_thrift_object(s):
     ms.swap_total = s.swap_total
     ms.swap_free = s.swap_free
     ms.processes = []
+    ms.netdevs = []
     for p in s.processes:
         pi = runtime_process_translate_to_thrift_object(p)
         ms.processes.append(pi)
+    for n in s.netdevs:
+        ni = network_process_translate_to_thrift_object(n)
+        ms.netdevs.append(ni)
 
     return ms
 

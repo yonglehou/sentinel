@@ -13,7 +13,6 @@ setup(
     packages=[
         'sentinel',
 	'sentinel.platform',
-        'sentinel.platform.linux',
         'sentinel.thrift',
         ],
     data_files=[

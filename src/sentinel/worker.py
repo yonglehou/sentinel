@@ -1,10 +1,10 @@
 from multiprocessing import Process
-from datastore import SystemStatus, RuntimeProcess
+from datastore import SystemStatus
 
 import time
 import datastore
 
-monitor_attrs = ['system_version','uptime', 'load_average', 'cpu_status', 'memory_status', 'process_status']
+monitor_attrs = ['system_version','uptime', 'load_average', 'cpu_status', 'memory_status', 'process_status', 'disk_status', 'network_status']
 
 class DataCollector:
     def __init__(self, system_status):
