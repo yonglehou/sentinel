@@ -43,6 +43,7 @@ def system_status_translate_to_thrift_object(s):
     ms.swap_total = s.swap_total
     ms.swap_free = s.swap_free
     ms.processes = []
+    ms.blockdevs = []
     ms.netdevs = []
     for p in s.processes:
         pi = runtime_process_translate_to_thrift_object(p)
