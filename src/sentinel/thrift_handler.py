@@ -48,12 +48,14 @@ def system_status_translate_to_thrift_object(s):
     for p in s.processes:
         pi = runtime_process_translate_to_thrift_object(p)
         ms.processes.append(pi)
+
     for n in s.netdevs:
         ni = network_device_translate_to_thrift_object(n)
         ms.netdevs.append(ni)
-    for b in s.blockdevs:
-        bi = block_device_translate_to_thrift_object(b)
-        ms.blockdevs.append(bi)
+
+#    for b in s.blockdevs:
+#        bi = block_device_translate_to_thrift_object(b)
+#        ms.blockdevs.append(bi)
 
     return ms
 

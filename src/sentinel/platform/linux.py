@@ -188,6 +188,8 @@ def disk_status(system_status):
                         nbd.read = blockd.read - pbd.read
                         nbd.write = blockd.read - pbd.write
                         
+                        print(nbd.to_dict())
+
                         system_status.blockdevs.append(nbd)
 
                     prev_blockdev_map[device] = blockd

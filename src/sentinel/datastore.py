@@ -139,6 +139,13 @@ def load_system_status(target_date):
 
         for cu in entry['cpu_usages']:
             s.cpu_usages.append(cu)
+        
+        for be in entry['blockdevs']:
+            b = BlockDevice()
+            b.devicename = be['device']
+            b.read = be['read']
+            b.write = be['write']
+            s.blockdevs.append(b)
 
         for pe in entry['processes']:
             p = RuntimeProcess()
