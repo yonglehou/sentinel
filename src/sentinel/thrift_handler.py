@@ -22,7 +22,7 @@ def network_device_translate_to_thrift_object(n):
     ni.receive = n.receive
     return ni
 
-def block_device_translate_to_thrift_object(n):
+def block_device_translate_to_thrift_object(b):
     bi = BlockDeviceInfo()
     bi.device = b.device
     bi.read = b.read
