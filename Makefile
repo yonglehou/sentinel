@@ -5,6 +5,7 @@ THRIFT := /usr/local/bin/thrift
 all: clean compile-thrift
 
 setup:
+	sudo rm -rf build
 	sudo python setup.py install
 
 compile-thrift: sentinel.thrift
