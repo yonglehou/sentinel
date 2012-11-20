@@ -18,15 +18,15 @@ def runtime_process_translate_to_thrift_object(p):
 def network_device_translate_to_thrift_object(n):
     ni = NetworkDeviceInfo()
     ni.device = n.device
-    ni.send = n.send
-    ni.receive = n.receive
+    ni.data_send = n.data_send
+    ni.data_receive = n.data_receive
     return ni
 
 def block_device_translate_to_thrift_object(b):
     bi = BlockDeviceInfo()
     bi.device = b.device
-    bi.read = b.read
-    bi.write = b.write
+    bi.data_read = b.data_read
+    bi.data_write = b.data_write
     return bi
 
 def system_status_translate_to_thrift_object(s):
@@ -67,7 +67,6 @@ class SentinelHandler:
         system_status = SystemMonitor(self.platform_api).action()
 
         translated = system_status_translate_to_thrift_object(system_status)
-        print(translated)
         return translated
 
     def get_current_cpu_usages(self):

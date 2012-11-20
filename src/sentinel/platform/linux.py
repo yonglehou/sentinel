@@ -178,8 +178,8 @@ def disk_status(system_status):
 
                     blockd = BlockDevice()
                     blockd.device = device
-                    blockd.read = read_complete
-                    blockd.write = write_complete
+                    blockd.data_read = read_complete
+                    blockd.data_write = write_complete
                     
                     system_status.blockdevs.append(blockd)
                     
@@ -200,8 +200,8 @@ def network_status(system_status):
                 
                 netdev = NetworkDevice()
                 netdev.device = device.strip(' \t\n\r')
-                netdev.receive = net_in
-                netdev.send = net_out
+                netdev.data_receive = net_in
+                netdev.data_send = net_out
                 
                 system_status.netdevs.append(netdev)
 

@@ -6,14 +6,14 @@ namespace rb sentinel
 
 struct BlockDeviceInfo {
        1: string device
-       2: i64 read
-       3: i64 write
+       2: i64 data_read
+       3: i64 data_write
 }
 
 struct NetworkDeviceInfo {
        1: string device
-       2: i64 send
-       3: i64 receive
+       2: i64 data_send
+       3: i64 data_receive
 }
 
 struct ProcessInfo {

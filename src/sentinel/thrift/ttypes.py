@@ -21,21 +21,21 @@ class BlockDeviceInfo:
   """
   Attributes:
    - device
-   - read
-   - write
+   - data_read
+   - data_write
   """
 
   thrift_spec = (
     None, # 0
     (1, TType.STRING, 'device', None, None, ), # 1
-    (2, TType.I64, 'read', None, None, ), # 2
-    (3, TType.I64, 'write', None, None, ), # 3
+    (2, TType.I64, 'data_read', None, None, ), # 2
+    (3, TType.I64, 'data_write', None, None, ), # 3
   )
 
-  def __init__(self, device=None, read=None, write=None,):
+  def __init__(self, device=None, data_read=None, data_write=None,):
     self.device = device
-    self.read = read
-    self.write = write
+    self.data_read = data_read
+    self.data_write = data_write
 
   def read(self, iprot):
     if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
@@ -53,12 +53,12 @@ class BlockDeviceInfo:
           iprot.skip(ftype)
       elif fid == 2:
         if ftype == TType.I64:
-          self.read = iprot.readI64();
+          self.data_read = iprot.readI64();
         else:
           iprot.skip(ftype)
       elif fid == 3:
         if ftype == TType.I64:
-          self.write = iprot.readI64();
+          self.data_write = iprot.readI64();
         else:
           iprot.skip(ftype)
       else:
@@ -75,13 +75,13 @@ class BlockDeviceInfo:
       oprot.writeFieldBegin('device', TType.STRING, 1)
       oprot.writeString(self.device)
       oprot.writeFieldEnd()
-    if self.read is not None:
-      oprot.writeFieldBegin('read', TType.I64, 2)
-      oprot.writeI64(self.read)
+    if self.data_read is not None:
+      oprot.writeFieldBegin('data_read', TType.I64, 2)
+      oprot.writeI64(self.data_read)
       oprot.writeFieldEnd()
-    if self.write is not None:
-      oprot.writeFieldBegin('write', TType.I64, 3)
-      oprot.writeI64(self.write)
+    if self.data_write is not None:
+      oprot.writeFieldBegin('data_write', TType.I64, 3)
+      oprot.writeI64(self.data_write)
       oprot.writeFieldEnd()
     oprot.writeFieldStop()
     oprot.writeStructEnd()
@@ -105,21 +105,21 @@ class NetworkDeviceInfo:
   """
   Attributes:
    - device
-   - send
-   - receive
+   - data_send
+   - data_receive
   """
 
   thrift_spec = (
     None, # 0
     (1, TType.STRING, 'device', None, None, ), # 1
-    (2, TType.I64, 'send', None, None, ), # 2
-    (3, TType.I64, 'receive', None, None, ), # 3
+    (2, TType.I64, 'data_send', None, None, ), # 2
+    (3, TType.I64, 'data_receive', None, None, ), # 3
   )
 
-  def __init__(self, device=None, send=None, receive=None,):
+  def __init__(self, device=None, data_send=None, data_receive=None,):
     self.device = device
-    self.send = send
-    self.receive = receive
+    self.data_send = data_send
+    self.data_receive = data_receive
 
   def read(self, iprot):
     if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
@@ -137,12 +137,12 @@ class NetworkDeviceInfo:
           iprot.skip(ftype)
       elif fid == 2:
         if ftype == TType.I64:
-          self.send = iprot.readI64();
+          self.data_send = iprot.readI64();
         else:
           iprot.skip(ftype)
       elif fid == 3:
         if ftype == TType.I64:
-          self.receive = iprot.readI64();
+          self.data_receive = iprot.readI64();
         else:
           iprot.skip(ftype)
       else:
@@ -159,13 +159,13 @@ class NetworkDeviceInfo:
       oprot.writeFieldBegin('device', TType.STRING, 1)
       oprot.writeString(self.device)
       oprot.writeFieldEnd()
-    if self.send is not None:
-      oprot.writeFieldBegin('send', TType.I64, 2)
-      oprot.writeI64(self.send)
+    if self.data_send is not None:
+      oprot.writeFieldBegin('data_send', TType.I64, 2)
+      oprot.writeI64(self.data_send)
       oprot.writeFieldEnd()
-    if self.receive is not None:
-      oprot.writeFieldBegin('receive', TType.I64, 3)
-      oprot.writeI64(self.receive)
+    if self.data_receive is not None:
+      oprot.writeFieldBegin('data_receive', TType.I64, 3)
+      oprot.writeI64(self.data_receive)
       oprot.writeFieldEnd()
     oprot.writeFieldStop()
     oprot.writeStructEnd()
