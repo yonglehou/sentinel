@@ -173,8 +173,8 @@ def disk_status(system_status):
                 minor_no = values[1]
                 if int(major_no) == 8:
                     device = values[2].strip(' \t\n\r')
-                    read_complete = long(values[3])
-                    write_complete = long(values[8])
+                    read_complete = long(values[3]) * 512
+                    write_complete = long(values[8]) * 512
 
                     blockd = BlockDevice()
                     blockd.device = device
