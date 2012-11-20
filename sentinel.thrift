@@ -47,6 +47,7 @@ struct CommandResponse {
 }
 
 service Sentinel {
+	void heartbeat(),
 	MachineStatus get_current_status(),
 	list<i64> get_current_cpu_usages(),
 	list<i64> get_current_memory_usages(),

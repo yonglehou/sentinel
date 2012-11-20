@@ -23,6 +23,7 @@ if len(sys.argv) <= 1 or sys.argv[1] == '--help':
   print 'Usage: ' + sys.argv[0] + ' [-h host[:port]] [-u url] [-f[ramed]] function [arg1 [arg2...]]'
   print ''
   print 'Functions:'
+  print '  void heartbeat()'
   print '  MachineStatus get_current_status()'
   print '   get_current_cpu_usages()'
   print '   get_current_memory_usages()'
@@ -80,7 +81,13 @@ protocol = TBinaryProtocol.TBinaryProtocol(transport)
 client = Sentinel.Client(protocol)
 transport.open()
 
-if cmd == 'get_current_status':
+if cmd == 'heartbeat':
+  if len(args) != 0:
+    print 'heartbeat requires 0 args'
+    sys.exit(1)
+  pp.pprint(client.heartbeat())
+
+elif cmd == 'get_current_status':
   if len(args) != 0:
     print 'get_current_status requires 0 args'
     sys.exit(1)

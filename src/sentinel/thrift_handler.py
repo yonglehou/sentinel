@@ -62,6 +62,9 @@ def system_status_translate_to_thrift_object(s):
 class SentinelHandler:
     def __init__(self, platform_api):
         self.platform_api = platform_api;
+
+    def heartbeat(self):
+        return 1
         
     def get_current_status(self):
         system_status = SystemMonitor(self.platform_api).action()
