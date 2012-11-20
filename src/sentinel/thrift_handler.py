@@ -27,6 +27,9 @@ def block_device_translate_to_thrift_object(b):
     bi.device = b.device
     bi.read = b.read
     bi.write = b.write
+    print bi.device
+    print bi.read
+    print bi.write
     return bi
 
 def system_status_translate_to_thrift_object(s):
