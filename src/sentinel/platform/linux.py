@@ -177,6 +177,7 @@ def disk_status(system_status):
                     write_complete = long(values[8])
 
                     blockd = BlockDevice()
+                    blockd.device = device
                     blockd.read = read_complete
                     blockd.write = write_complete
                     
