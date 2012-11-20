@@ -85,7 +85,7 @@ class NetworkDevice:
         self.device = ''
         self.send = ''
         self.receive = ''
-    
+
     def to_dict(self):
         return {
             'device': self.device,

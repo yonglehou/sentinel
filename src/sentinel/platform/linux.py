@@ -173,7 +173,7 @@ def disk_status(system_status):
                 major_no = values[0]
                 minor_no = values[1]
                 if int(major_no) == 8:
-                    device = values[2]
+                    device = values[2].strip()
                     read_complete = long(values[3])
                     write_complete = long(values[8])
 
@@ -188,8 +188,6 @@ def disk_status(system_status):
                         nbd.read = blockd.read - pbd.read
                         nbd.write = blockd.read - pbd.write
                         
-                        print(nbd.to_dict())
-
                         system_status.blockdevs.append(nbd)
 
                     prev_blockdev_map[device] = blockd
@@ -211,7 +209,7 @@ def network_status(system_status):
                 net_out = long(values[8])
                 
                 netdev = NetworkDevice()
-                netdev.device = device
+                netdev.device = device.strip()
                 netdev.receive = net_in
                 netdev.send = net_out
 

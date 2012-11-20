@@ -32,6 +32,7 @@ class SystemMonitor:
         while(True):
             time.sleep(1)
             system_status = self.action()
+
             collectorp = Process(name='Sentinel Worker : DataCollector', target=DataCollector(system_status))
             collectorp.daemon = True
             collectorp.start()
