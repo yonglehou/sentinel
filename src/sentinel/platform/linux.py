@@ -159,6 +159,7 @@ def process_status(system_status):
 
     system_status.processes = processes
 
+prev_blockdev_map = {}
 blockio_dev_regex = re.compile(r'')
 def disk_status(system_status):
     with open(PROC_DISKSTATS_FILE, 'r') as f:
@@ -172,16 +173,26 @@ def disk_status(system_status):
                 major_no = values[0]
                 minor_no = values[1]
                 if int(major_no) == 8:
-                    device = values[2].strip(' \t\n\r')
+                    device = values[2]
                     read_complete = long(values[3]) * 512
                     write_complete = long(values[8]) * 512
 
                     blockd = BlockDevice()
-                    blockd.device = device
+                    blockd.device = device.strip(' \t\n\r')
                     blockd.data_read = read_complete
                     blockd.data_write = write_complete
                     
-                    system_status.blockdevs.append(blockd)
+                    if device in prev_blockdev_map:
+                        pbd = prev_blockdev_map[device]
+                        
+                        nbd = BlockDevice()
+                        nbd.device = blockd.device
+                        nbd.data_read = blockd.data_read - pbd.data_read
+                        nbd.data_write = blockd.data_write - pbd.data_write
+                    
+                        system_status.blockdevs.append(blockd)
+
+                    prev_blockdev_map[device] = blockd
                     
 
 prev_netdev_map = {}
