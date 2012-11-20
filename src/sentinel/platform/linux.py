@@ -173,7 +173,7 @@ def disk_status(system_status):
                 major_no = values[0]
                 minor_no = values[1]
                 if int(major_no) == 8:
-                    device = values[2].strip()
+                    device = values[2].strip(' \t\n\r')
                     read_complete = long(values[3])
                     write_complete = long(values[8])
 
@@ -209,7 +209,8 @@ def network_status(system_status):
                 net_out = long(values[8])
                 
                 netdev = NetworkDevice()
-                netdev.device = device.strip()
+                netdev.device = device.strip(' \t\n\r')
+                print(netdev.device)
                 netdev.receive = net_in
                 netdev.send = net_out
 
