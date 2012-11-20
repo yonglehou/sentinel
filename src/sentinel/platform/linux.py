@@ -184,6 +184,7 @@ def disk_status(system_status):
                     system_status.blockdevs.append(blockd)
                     
 
+prev_netdev_map = {}
 netstat_dev_regex = re.compile(r'.+:')
 def network_status(system_status):
     with open(PROC_NETSTAT_FILE, 'r') as f:
@@ -203,5 +204,16 @@ def network_status(system_status):
                 netdev.data_receive = net_in
                 netdev.data_send = net_out
                 
-                system_status.netdevs.append(netdev)
+                if device in prev_netdev_map:
+                    pnd = prev_netdev_map[device]
+
+                    nnd = NetworkDevice()
+                    nnd.device = netdev.device
+                    nnd.data_receive = netdev.data_receive - pnd.data_receive
+                    nnd.data_send = netdev.data_send - pnd.data_send
+                    
+                    system_status.netdevs.append(nnd)
+
+                prev_netdev_map[device] = netdev
+
 
