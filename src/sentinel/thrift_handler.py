@@ -27,9 +27,6 @@ def block_device_translate_to_thrift_object(b):
     bi.device = b.device
     bi.read = b.read
     bi.write = b.write
-    print bi.device
-    print bi.read
-    print bi.write
     return bi
 
 def system_status_translate_to_thrift_object(s):
@@ -69,7 +66,9 @@ class SentinelHandler:
     def get_current_status(self):
         system_status = SystemMonitor(self.platform_api).action()
 
-        return system_status_translate_to_thrift_object(system_status)
+        translated = system_status_translate_to_thrift_object(system_status)
+        print(translated)
+        return translated
 
     def get_current_cpu_usages(self):
         system_status = SystemStatus()
