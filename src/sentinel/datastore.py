@@ -70,27 +70,27 @@ class RuntimeProcess:
 class BlockDevice:
     def __init__(self):
         self.device = ''
-        self.read = ''
-        self.write = ''
+        self.data_read = ''
+        self.datawrite = ''
     
     def to_dict(self):
         return {
             'device': self.device,
-            'read': self.read,
-            'write': self.write,
+            'data_read': self.data_read,
+            'data_write': self.data_write,
             }
 
 class NetworkDevice:
     def __init__(self):
         self.device = ''
-        self.send = ''
-        self.receive = ''
-    
+        self.data_send = ''
+        self.data_receive = ''
+
     def to_dict(self):
         return {
             'device': self.device,
-            'send': self.send,
-            'receive': self.receive,
+            'data_send': self.data_send,
+            'data_receive': self.data_receive,
             }
 
 

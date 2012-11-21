@@ -174,26 +174,26 @@ def disk_status(system_status):
                 minor_no = values[1]
                 if int(major_no) == 8:
                     device = values[2]
-                    read_complete = long(values[3])
-                    write_complete = long(values[8])
+                    read_complete = long(values[3]) * 512
+                    write_complete = long(values[8]) * 512
 
                     blockd = BlockDevice()
-                    blockd.read = read_complete
-                    blockd.write = write_complete
+                    blockd.device = device.strip(' \t\n\r')
+                    blockd.data_read = read_complete
+                    blockd.data_write = write_complete
+                    
                     if device in prev_blockdev_map:
                         pbd = prev_blockdev_map[device]
                         
                         nbd = BlockDevice()
-                        nbd.device = device
-                        nbd.read = blockd.read - pbd.read
-                        nbd.write = blockd.read - pbd.write
-                        
-                        print(nbd.to_dict())
-
-                        system_status.blockdevs.append(nbd)
+                        nbd.device = blockd.device
+                        nbd.data_read = blockd.data_read - pbd.data_read
+                        nbd.data_write = blockd.data_write - pbd.data_write
+                    
+                        system_status.blockdevs.append(blockd)
 
                     prev_blockdev_map[device] = blockd
-
+                    
 
 prev_netdev_map = {}
 netstat_dev_regex = re.compile(r'.+:')
@@ -211,19 +211,20 @@ def network_status(system_status):
                 net_out = long(values[8])
                 
                 netdev = NetworkDevice()
-                netdev.device = device
-                netdev.receive = net_in
-                netdev.send = net_out
-
+                netdev.device = device.strip(' \t\n\r')
+                netdev.data_receive = net_in
+                netdev.data_send = net_out
+                
                 if device in prev_netdev_map:
                     pnd = prev_netdev_map[device]
 
                     nnd = NetworkDevice()
-                    nnd.device = device
-                    nnd.receive = netdev.receive - pnd.receive
-                    nnd.send = netdev.send - pnd.send
-
+                    nnd.device = netdev.device
+                    nnd.data_receive = netdev.data_receive - pnd.data_receive
+                    nnd.data_send = netdev.data_send - pnd.data_send
+                    
                     system_status.netdevs.append(nnd)
-                
+
                 prev_netdev_map[device] = netdev
+
 
