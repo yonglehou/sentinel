@@ -36,6 +36,7 @@ def system_status_translate_to_thrift_object(s):
     ms.os_version = s.os_version
     ms.uptime = s.uptime
     ms.idletime = s.idletime
+    ms.loadavgs = s.loadavgs
     ms.cpu_total = s.cpu_total
     ms.cpu_usages = s.cpu_usages
     ms.memory_total = s.memory_total

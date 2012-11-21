@@ -25,7 +25,7 @@ def load_average(system_status):
     with open(PROC_LOADAVG_FILE, 'r') as f:
         line = f.readline()
         data = line.split(' ')
-        system_status.loadavg1, system_status.loadavg5, system_status.loadavg15 = data[0], data[1], data[2]
+        system_status.loadavgs = [float(data[0]), float(data[1]), float(data[2])]
 
 def uptime(system_status):
     with open(PROC_UPTIME_FILE, 'r') as f:

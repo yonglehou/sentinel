@@ -31,13 +31,14 @@ struct MachineStatus {
        3: string os_version
        4: i64 uptime
        5: i64 idletime
-       6: i16 cpu_total
-       7: list<i16> cpu_usages
-       8: i64 memory_total
-       9: i64 memory_free
-       10: i64 swap_total
-       11: i64 swap_free
-       12: list<ProcessInfo> processes
+       6: list<double> loadavgs
+       7: i16 cpu_total
+       8: list<i16> cpu_usages
+       9: i64 memory_total
+       10: i64 memory_free
+       11: i64 swap_total
+       12: i64 swap_free
+       13: list<ProcessInfo> processes
        14: list<NetworkDeviceInfo> netdevs
        15: list<BlockDeviceInfo> blockdevs
 }

@@ -14,6 +14,7 @@ class SystemStatus:
         self.os_version = ''
         self.uptime = 0
         self.idletime = 0
+        self.loadavgs = []
         self.cpu_total = None
         self.cpu_usages = []
         self.memory_total = 0
@@ -34,6 +35,7 @@ class SystemStatus:
             'os_version' : self.os_version,
             'uptime': self.uptime,
             'idletime': self.idletime,
+            'loadavgs': self.loadavgs,
             'cpu_total': self.cpu_total,
             'cpu_usages': self.cpu_usages,
             'memory_total': self.memory_total,
