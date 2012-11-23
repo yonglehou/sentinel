@@ -15,6 +15,9 @@ PROC_LOADAVG_FILE = PROC_DIR + '/loadavg'
 PROC_VERSION_FILE = PROC_DIR + '/version'
 PROC_NETSTAT_FILE = PROC_DIR + '/net/dev'
 
+def get_hz(system_status):
+    return os.sysconf('SC_CLK_TCK');
+
 def system_version(system_status):
     with open(PROC_VERSION_FILE, 'r') as f:
         line = f.readline()
