@@ -30,7 +30,7 @@ class SystemMonitor:
 
     def __call__(self):
         while(True):
-            time.sleep(1)
+            time.sleep(3)
             system_status = self.action()
 
             collectorp = Process(name='Sentinel Worker : DataCollector', target=DataCollector(system_status))
