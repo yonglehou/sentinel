@@ -22,7 +22,7 @@ def create_thrift_server():
     transport = TSocket.TServerSocket(port=9090)
     tfactory = TTransport.TBufferedTransportFactory()
     pfactory = TBinaryProtocol.TBinaryProtocolFactory()
-    server = TServer.TForkingServer(processor, transport, tfactory, pfactory)
+    server = TServer.TThreadPoolServer(processor, transport, tfactory, pfactory)
     return server
 
 if __name__ == '__main__':
