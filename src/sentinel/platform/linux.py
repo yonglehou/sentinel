@@ -127,10 +127,6 @@ def memory_status(system_status):
                 data = line.split(' ')
                 system_status.swap_free = long(data[len(data) - 2])
 
-def disk_status(system_status):
-    with open(PROC_DISKSTATS_FILE, 'r') as f:        
-        pass
-
 process_dir_regex = re.compile(r'[0-9]+')
 PROC_PROCESS_STAT_PATTERN = PROC_DIR + '/%d/stat'
 PROC_PROCESS_CMDLINE_PATTERN = PROC_DIR + '/%d/cmdline'
@@ -173,29 +169,27 @@ def disk_status(system_status):
                 for i in line.split(' '):
                     if i != '':
                         values.append(i)
-                major_no = values[0]
-                minor_no = values[1]
-                if int(major_no) == 8:
-                    device = values[2]
-                    read_complete = long(values[3]) * 512
-                    write_complete = long(values[8]) * 512
 
-                    blockd = BlockDevice()
-                    blockd.device = device.strip(' \t\n\r')
-                    blockd.data_read = read_complete
-                    blockd.data_write = write_complete
+                device = values[2]
+                read_complete = long(values[3]) * 512
+                write_complete = long(values[8]) * 512
+                
+                blockd = BlockDevice()
+                blockd.device = device.strip(' \t\n\r')
+                blockd.data_read = read_complete
+                blockd.data_write = write_complete
                     
-                    if device in prev_blockdev_map:
-                        pbd = prev_blockdev_map[device]
-                        
-                        nbd = BlockDevice()
-                        nbd.device = blockd.device
-                        nbd.data_read = blockd.data_read - pbd.data_read
-                        nbd.data_write = blockd.data_write - pbd.data_write
+                if device in prev_blockdev_map:
+                    pbd = prev_blockdev_map[device]
                     
-                        system_status.blockdevs.append(blockd)
+                    nbd = BlockDevice()
+                    nbd.device = blockd.device
+                    nbd.data_read = blockd.data_read - pbd.data_read
+                    nbd.data_write = blockd.data_write - pbd.data_write
+                    
+                    system_status.blockdevs.append(blockd)
 
-                    prev_blockdev_map[device] = blockd
+                prev_blockdev_map[device] = blockd
                     
 
 prev_netdev_map = {}
